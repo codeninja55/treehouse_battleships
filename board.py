@@ -1,9 +1,10 @@
+from player import Player
+from battleship import *
 import os
-import random
 
 
 class Board:
-    BOARD_SIZE = 5
+    BOARD_SIZE = 10
 
     VERTICAL_SHIP = '|'
     HORIZONTAL_SHIP = '-'
@@ -12,11 +13,12 @@ class Board:
     HIT = '*'
     SUNK = '#'
 
+    # clears the screen based on the esc key being printed
     def clear_screen(self):
         if os.name == 'nt':
-            print("\x1b", end="")
+            print("\x1b", end=" ")
         else:
-            print("\033c", end="")
+            print("\033c", end=" ")
 
     # Will be called in print_board method
     def print_board_heading(self):
@@ -24,13 +26,15 @@ class Board:
                                                       ord('A') +
                                                       self.BOARD_SIZE)]))
 
-    # TODO - display boards to the screen
     def print_board(self):
+        print("\n")
         self.print_board_heading()
 
         board = []
         row_num = 1
 
+        # prints a nested list with board[x] being the row and board[] being
+        # the columns.
         for row in range(self.BOARD_SIZE):
             board.append([self.EMPTY for col in range(self.BOARD_SIZE)])
 
@@ -38,16 +42,8 @@ class Board:
             print(str(row_num).rjust(2) + " " + (" ".join(row)))
             row_num += 1
 
+        print("\n")
 
-class Battleships(Board):
-    SHIP_INFO = [
-        ("Aircraft Carrier", 5),
-        ("Battleship", 4),
-        ("Submarine", 3),
-        ("Cruiser", 3),
-        ("Patrol Boat", 2)]
-
-    def get_random(self):
-        # get a random battleship from SHIP_INFO
-        # allow user to place ship on board
+    def validate_ship_placement(self):
+        # TODO - validate ship placement
         pass

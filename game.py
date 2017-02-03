@@ -1,5 +1,6 @@
 from board import Board
 from player import Player
+import os
 
 class Game:
     def game_progress(self):
@@ -28,27 +29,26 @@ class Game:
         # attempt.
         pass
 
-    def second_player_guess(self):
-        # TODO - prompt player for guess
-        # run validate_input to validate guesses
-        # hold a list of guesses to be displayed
-        # guess_list = []
-        pass
+    def clear(self):
+        if os.name == 'nt':
+            os.system('cls')
+        else:
+            os.system('clear')
 
-    def first_player_guess(self):
-        # TODO - prompt player for guess
-        # run validate_input to validate guesses
-        # hold a list of guesses to be displayed
-        # guess_list = []
-        pass
 
     def __init__(self):
         # display an empty board
+        self.clear()
         empty_board = Board()
         empty_board.clear_screen()
         empty_board.print_board()
 
-        # prompt the player for their names
+        # Instantiate two players, ask for name, then place ships
+        player1 = Player()
+        player1.ship_placement()
+        # self.clear()
+        player2 = Player()
+        player2.ship_placement()
 
         # while self.game_progress():
             # self.first_player_turn()
