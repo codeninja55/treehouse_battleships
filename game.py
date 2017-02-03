@@ -43,11 +43,12 @@ class Game:
         pass
 
     def __init__(self):
-        # TODO - display an empty board
-
+        # display an empty board
         empty_board = Board()
         empty_board.clear_screen()
         empty_board.print_board()
+
+        # prompt the player for their names
 
         # while self.game_progress():
             # self.first_player_turn()
