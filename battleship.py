@@ -38,20 +38,18 @@ class Battleship:
 
     def valid_placement(self, coord, board):
         # TODO - validate ship placement
-        coord = coord.split()
+        print(ord(coord[0]))
+        y = ord(coord[0]) - 97
+        x = int(coord[1]) - 1
         if self.direction == 'VERTICAL_SHIP':
             for point in range(0, self.length):
-                print()
-                y = int(coord[0]) - (1 + point)
-                x = ord(coord[1]) - (97 + point)
-                board[y][x] = board.VERTICAL_SHIP
-
+                x += 1
+                board.game_board[y][x] = board.VERTICAL_SHIP
             return True
         elif self.direction == 'HORIZONTAL_SHIP':
             for point in range(0, self.length):
-                y = int(coord[0]) - (1 + point)
-                x = ord(coord[1]) - (97 + point)
-
+                y += 1
+                board.game_board[y][x] = board.HORIZONTAL_SHIP
             return True
         else:
             return False

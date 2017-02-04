@@ -56,8 +56,7 @@ class Player():
             else:
                 ship_choice.direction = "HORIZONTAL_SHIP"
 
-            if ship_choice.valid_placement(ship_choice.coord,
-                                           player_board.game_board):
+            if ship_choice.valid_placement(ship_choice.coord, player_board):
                 self.fleet.append(ship_choice)
             else:
                 print(ShipPlacementError())
