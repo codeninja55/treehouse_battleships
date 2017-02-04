@@ -1,3 +1,6 @@
+from errors import ShipPlacementError
+
+
 class Battleship:
     # provided by Treehouse's original project file
     SHIP_INFO = [
@@ -32,6 +35,26 @@ class Battleship:
 
     def get_location(self):
         pass
+
+    def valid_placement(self, coord, board):
+        # TODO - validate ship placement
+        coord = coord.split()
+        if self.direction == 'VERTICAL_SHIP':
+            for point in range(0, self.length):
+                print()
+                y = int(coord[0]) - (1 + point)
+                x = ord(coord[1]) - (97 + point)
+                board[y][x] = board.VERTICAL_SHIP
+
+            return True
+        elif self.direction == 'HORIZONTAL_SHIP':
+            for point in range(0, self.length):
+                y = int(coord[0]) - (1 + point)
+                x = ord(coord[1]) - (97 + point)
+
+            return True
+        else:
+            return False
 
 
 class Aircraft_Carrier(Battleship):
