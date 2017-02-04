@@ -1,5 +1,5 @@
-from errors import ShipPlacementError
-
+from errors import ShipPlacementError, CoordinatesOccupiedError
+from helpers import convert_coord
 
 class Battleship:
     # provided by Treehouse's original project file
@@ -19,6 +19,8 @@ class Battleship:
         pass
 
     def print_ships(self):
+        """This method iterates through the SHIP_INFO list and prints each
+        one so that players can select the battleship based on index"""
         count = 1
         print("\n")
         for ship, val in self.SHIP_INFO:
@@ -27,36 +29,30 @@ class Battleship:
         print("\n")
 
     def remove_ship_choice(self, ship):
+        """This method removes and returns a tuple from the list in SHIP_INFO"""
         try:
             return self.SHIP_INFO.pop(ship)
         except ValueError:
             return False
 
-    def check_sunk(self):
-        pass
-
-    def get_location(self):
-        pass
-
-    # Will take coord, ship selection, and direction from player's battleship
-    # choice and the player's board to check if it's possible to place a
-    # battle in that place.
     def valid_placement(self, selectn, coord, directn, board):
-        # TODO - validate ship placement
-        y = ord(coord[0]) - 97
-
-        if len(coord) > 2:
-            x = int(coord[1:]) - 1
-        else:
-            x = int(coord[1]) - 1
+        """This method will take arguments of selection index, coordinates,
+        and direction, as well as the player's board. It will check those
+        arguments to validate the placement of ship on the board. If
+        validation is successful, the method will return true which is used
+        to check for validation."""
+        # Unpacks tuples from convert_coord function that converts the
+        # coordinates to an index value.
+        x, y = convert_coord(coord)
 
         if directn == 'v':
+            # Checks if the battleship fits within the boundary of the board
             if x <= board.BOARD_SIZE - self.SHIP_INFO[selectn][1]:
                 for point in range(0, self.SHIP_INFO[selectn][1]):
-                    # print("x: {} | y: {} | point: {}".format(str(x),
-                    #                                          str(y),
-                    #                                          str(point)))
-                    board.game_board[x][y] = board.VERTICAL_SHIP
+                    # Checks if points on the board are EMPTY
+                    if board.game_board[x][y] != board.EMPTY:
+                        CoordinatesOccupiedError()
+                        return False
                     x += 1
             else:
                 ShipPlacementError()
@@ -64,10 +60,9 @@ class Battleship:
         elif directn == 'h':
             if y <= board.BOARD_SIZE - self.SHIP_INFO[selectn][1]:
                 for point in range(0, self.SHIP_INFO[selectn][1]):
-                    # print("x: {} | y: {} | point: {}".format(str(x),
-                    #                                          str(y),
-                    #                                          str(point)))
-                    board.game_board[x][y] = board.HORIZONTAL_SHIP
+                    if board.game_board[x][y] != board.EMPTY:
+                        CoordinatesOccupiedError()
+                        return False
                     y += 1
             else:
                 ShipPlacementError()
@@ -92,6 +87,8 @@ class Frigate(Battleship):
     length = 4
     coord = None
     direction = None
+    hit = []
+    sunk = False
 
 
 class Submarine(Battleship):
@@ -99,6 +96,8 @@ class Submarine(Battleship):
     length = 3
     coord = None
     direction = None
+    hit = []
+    sunk = False
 
 
 class Cruiser(Battleship):
@@ -106,6 +105,8 @@ class Cruiser(Battleship):
     length = 3
     coord = None
     direction = None
+    hit = []
+    sunk = False
 
 
 class Patrol_Boat(Battleship):
@@ -113,3 +114,5 @@ class Patrol_Boat(Battleship):
     length = 2
     coord = None
     direction = None
+    hit = []
+    sunk = False

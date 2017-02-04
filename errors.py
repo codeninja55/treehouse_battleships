@@ -4,13 +4,9 @@ class InputError(Exception):
 
 class ShipPlacementError:
     # print out error message
-
     def __init__(self):
-        print("Ship Placement Error")
+        print("\nShip Placement Error")
 
-    def __str__(self):
-        return "Ship Placement Error"
-
-    def printerr(self):
-        print("Ship Placement Error")
-
+class CoordinatesOccupiedError:
+    def __init__(self):
+        print("\nThese coordinates are occupied by another ship")

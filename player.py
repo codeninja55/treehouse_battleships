@@ -15,6 +15,7 @@ class Player():
             input("When ready, press enter/return to continue > ")
             self.ship_placement()
 
+        # Print an empty board so the player can decide their placements
         self.player_board.print_board(self.player_board.game_board)
 
         while len(self.battleship.SHIP_INFO) >= 1:
@@ -27,13 +28,15 @@ class Player():
             # TODO - need to validate input
             directn = input("\nHorizontal [ h ] or Vertical [ v ]? > ").lower()
 
-            # TODO - need to validate ship placement
+            # The condition will test if the ship can be placed on the board
+            # if its inside the bounds of the board or if there are no other
+            # ships already placed on the board. If the condition is not met,
+            #  an error will be printed.
             if self.battleship.valid_placement(selectn, coord,
                                                directn, self.player_board):
-                print("Success, ship placed on board.")
-                # Method to pop from list of ships and create battleship obj.
-                # Each battleship object will have attributes changed based on
-                # player input such as coordinates and directions of ship.
+
+                # If the ship placement is valid, create an object of
+                # subclasses of battleships and make changes to their attributes
                 ship_choice = self.battleship.remove_ship_choice(selectn)[0]
                 if ship_choice == "Aircraft Carrier":
                     ship_choice = Aircraft_Carrier()
@@ -55,8 +58,13 @@ class Player():
                 else:
                     ship_choice.direction = "HORIZONTAL_SHIP"
 
+                # Append a fleet of objects to the ship
                 self.fleet.append(ship_choice)
-                # TODO - need to display board with ship placements
+
+                # Run method from Board class to update player_board
+                self.player_board.place_ship(ship_choice)
+
+                # Displays the board with updated ships placed
                 self.player_board.print_board(self.player_board.game_board)
 
 

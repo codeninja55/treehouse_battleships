@@ -24,21 +24,19 @@ class Game:
         player1 = Player()
         player1.ship_placement()
         # self.clear()
-        player2 = Player()
-        player2.ship_placement()
+        # player2 = Player()
+        # player2.ship_placement()
 
     def __init__(self):
         # display an empty board
         clear()
-        empty_board = Board()
         clear_screen()
-        empty_board.print_board(empty_board.game_board)
 
-        while self.game_progress():
-            self.setup_game()
+        # while self.game_progress():
+
+        self.setup_game()
             # self.first_player_turn()
             # self.second_player_turn()
-            # TODO - update the board
             # TODO - allow players to take turns
 
 

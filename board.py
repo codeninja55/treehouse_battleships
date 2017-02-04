@@ -1,3 +1,5 @@
+from helpers import convert_coord
+
 class Board:
     BOARD_SIZE = 10
     VERTICAL_SHIP = '|'
@@ -6,12 +8,23 @@ class Board:
     MISS = '.'
     HIT = '*'
     SUNK = '#'
-    cols = []
-    rows = []
     game_board = []
 
-    def update_board(self):
-        pass
+    def place_ship(self, battleship):
+        x, y = convert_coord(battleship.coord)
+
+        if battleship.direction == 'VERTICAL_SHIP':
+            if x <= self.BOARD_SIZE - battleship.length:
+                for point in range(0, battleship.length):
+                    self.game_board[x][y] = self.VERTICAL_SHIP
+                    x += 1
+        else:
+            if y <= self.BOARD_SIZE - battleship.length:
+                for point in range(0, battleship.length):
+                    self.game_board[x][y] = self.HORIZONTAL_SHIP
+                    y += 1
+        # return new self.game_board
+        return self.game_board
 
     # Will be called in print_board method
     def print_board_heading(self):
