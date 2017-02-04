@@ -19,10 +19,12 @@ class Battleship:
         pass
 
     def print_ships(self):
-        count = 0
+        count = 1
+        print("\n")
         for ship, val in self.SHIP_INFO:
             print("[ {} ] {}: {} spaces".format(count, ship, val))
             count += 1
+        print("\n")
 
     def remove_ship_choice(self, ship):
         try:
@@ -36,23 +38,44 @@ class Battleship:
     def get_location(self):
         pass
 
-    def valid_placement(self, coord, board):
+    # Will take coord, ship selection, and direction from player's battleship
+    # choice and the player's board to check if it's possible to place a
+    # battle in that place.
+    def valid_placement(self, selectn, coord, directn, board):
         # TODO - validate ship placement
-        print(ord(coord[0]))
         y = ord(coord[0]) - 97
-        x = int(coord[1]) - 1
-        if self.direction == 'VERTICAL_SHIP':
-            for point in range(0, self.length):
-                x += 1
-                board.game_board[y][x] = board.VERTICAL_SHIP
-            return True
-        elif self.direction == 'HORIZONTAL_SHIP':
-            for point in range(0, self.length):
-                y += 1
-                board.game_board[y][x] = board.HORIZONTAL_SHIP
-            return True
+
+        if len(coord) > 2:
+            x = int(coord[1:]) - 1
+        else:
+            x = int(coord[1]) - 1
+
+        if directn == 'v':
+            if x <= board.BOARD_SIZE - self.SHIP_INFO[selectn][1]:
+                for point in range(0, self.SHIP_INFO[selectn][1]):
+                    # print("x: {} | y: {} | point: {}".format(str(x),
+                    #                                          str(y),
+                    #                                          str(point)))
+                    board.game_board[x][y] = board.VERTICAL_SHIP
+                    x += 1
+            else:
+                ShipPlacementError()
+                return False
+        elif directn == 'h':
+            if y <= board.BOARD_SIZE - self.SHIP_INFO[selectn][1]:
+                for point in range(0, self.SHIP_INFO[selectn][1]):
+                    # print("x: {} | y: {} | point: {}".format(str(x),
+                    #                                          str(y),
+                    #                                          str(point)))
+                    board.game_board[x][y] = board.HORIZONTAL_SHIP
+                    y += 1
+            else:
+                ShipPlacementError()
+                return False
         else:
             return False
+
+        return True
 
 
 class Aircraft_Carrier(Battleship):
@@ -60,6 +83,8 @@ class Aircraft_Carrier(Battleship):
     length = 5
     coord = None
     direction = None
+    hit = []
+    sunk = False
 
 
 class Frigate(Battleship):
