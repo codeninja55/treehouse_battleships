@@ -23,3 +23,14 @@ def validate_input(content):
     # want to clear the screen and display the screen again before each
     # attempt.
     pass
+
+def convert_coord(coord):
+    """This helper function converts coordinates such as a1 to index numbers"""
+    y = ord(coord[0]) - 97
+
+    if len(coord) > 2:
+        x = int(coord[1:]) - 1
+    else:
+        x = int(coord[1]) - 1
+
+    return x, y
