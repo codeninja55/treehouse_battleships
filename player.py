@@ -1,32 +1,74 @@
 from battleship import *
 from board import Board
-from errors import ShipPlacementError
+from errors import InputError
+from helpers import clear
+
 
 class Player():
-    fleet = []
-    hit = []
-    missed = []
-    # Create new instance of Battleship() and Board() to implement methods
-    battleship = Battleship()
-    player_board = Board()
+    def validate_input(self, user_input):
+        if isinstance(user_input, int):
+            if user_input in list(range(0, len(self.battleship.SHIP_INFO))):
+                return True
+            else:
+                InputError().index_selection()
+                return False
+        elif isinstance(user_input, str):
+            user_input = user_input.lstrip().rstrip().lower()
+
+            if user_input == 'n':
+                while True:
+                    inp = input("When ready, press enter/return to continue > ")
+                    if inp == "":
+                        return True
+            elif user_input == 'h':
+                return True
+            elif user_input == 'v':
+                return True
+            elif len(user_input) > 1 and user_input[0].upper() in \
+                    self.player_board.cols:
+                if user_input[1:].isnumeric():
+                    if int(user_input[1:]) in self.player_board.rows:
+                        return True
+                    else:
+                        InputError().coordinates()
+                        return False
+                else:
+                    InputError().coordinates()
+                    return False
+        else:
+            return False
+
+        return True
 
     def ship_placement(self):
-        if self.confirmation == 'n':
-            input("When ready, press enter/return to continue > ")
-            self.ship_placement()
-
+        clear()
         # Print an empty board so the player can decide their placements
         self.player_board.print_board(self.player_board.game_board)
 
-        while len(self.battleship.SHIP_INFO) >= 1:
+        while len(self.battleship.SHIP_INFO) != 0:
             # print the list of available battleships to place
             self.battleship.print_ships()
 
-            selectn = (int(input("Choose the index of the ship you would like "
-                                "to place? > "))) - 1
+            selectn = input("Choose the index of the ship you would like "
+                            "to place? > ")
+            try:
+                selectn = int(selectn) - 1
+            except ValueError:
+                InputError().value()
+                self.ship_placement()
+
+            if not self.validate_input(selectn):
+                self.ship_placement()
+
             coord = input("Where to place the ship (e.g. a1)? > ").lower()
-            # TODO - need to validate input
-            directn = input("\nHorizontal [ h ] or Vertical [ v ]? > ").lower()
+
+            if not self.validate_input(coord):
+                self.ship_placement()
+
+            directn = input("Horizontal [ h ] or Vertical [ v ]? > ").lower()
+
+            if not self.validate_input(directn):
+                self.ship_placement()
 
             # The condition will test if the ship can be placed on the board
             # if its inside the bounds of the board or if there are no other
@@ -38,25 +80,24 @@ class Player():
                 # If the ship placement is valid, create an object of
                 # subclasses of battleships and make changes to their attributes
                 ship_choice = self.battleship.remove_ship_choice(selectn)[0]
-                if ship_choice == "Aircraft Carrier":
-                    ship_choice = Aircraft_Carrier()
-                elif ship_choice == "Frigate":
-                    ship_choice = Frigate()
-                elif ship_choice == "Submarine":
-                    ship_choice = Submarine()
-                elif ship_choice == "Cruiser":
-                    ship_choice = Cruiser()
-                elif ship_choice == "Patrol Boat":
-                    ship_choice = Patrol_Boat()
-                else:
-                    break
-
-                ship_choice.coord = coord
 
                 if directn == "v":
-                    ship_choice.direction = "VERTICAL_SHIP"
+                    direction = "VERTICAL_SHIP"
                 else:
-                    ship_choice.direction = "HORIZONTAL_SHIP"
+                    direction = "HORIZONTAL_SHIP"
+
+                if ship_choice == "Aircraft Carrier":
+                    ship_choice = Aircraft_Carrier(coord, direction)
+                elif ship_choice == "Frigate":
+                    ship_choice = Frigate(coord, direction)
+                elif ship_choice == "Submarine":
+                    ship_choice = Submarine(coord, direction)
+                elif ship_choice == "Cruiser":
+                    ship_choice = Cruiser(coord, direction)
+                elif ship_choice == "Patrol Boat":
+                    ship_choice = Patrol_Boat(coord, direction)
+                else:
+                    break
 
                 # Append a fleet of objects to the ship
                 self.fleet.append(ship_choice)
@@ -65,13 +106,35 @@ class Player():
                 self.player_board.place_ship(ship_choice)
 
                 # Displays the board with updated ships placed
+                clear()
                 self.player_board.print_board(self.player_board.game_board)
 
+                if len(self.battleship.SHIP_INFO ) == 0:
+                    clear()
+                    print("\n{} (Player: {}), you have now completed your "
+                          "setup of Battleship.".
+                          format(self.name.capitalize(), self.player_num))
 
     def __str__(self):
-        pass
+        return """Player: {}
+        Name: {}
+        Board: {}
+        """.format(self.player_num, self.name, self.player_board.print_board(
+            self.player_board.game_board))
 
-    def __init__(self):
-        self.name = input("NAME > ").lstrip().rstrip().lower()
-        self.confirmation = input("Are you ready to place your battleships? "
-                             "Y/n > ").lower()
+    def __init__(self, name, player_num):
+        self.fleet = []
+        self.hit = []
+        self.missed = []
+        self.player_num = player_num
+        # Create new instance of Battleship and Board objects to implement
+        # methods
+        self.battleship = Battleship()
+        self.player_board = Board()
+
+        self.name = name
+        self.confirmation = input("\nAre you ready to place your battleships? "
+                             "[ Y ] / [ n ] > ").lower()
+        # if not self.validate_input(self.confirmation):
+        #     InputError().confirmation_error()
+
