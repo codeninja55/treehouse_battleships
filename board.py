@@ -1,5 +1,6 @@
 from helpers import convert_coord
 
+
 class Board:
     BOARD_SIZE = 10
     VERTICAL_SHIP = '|'
@@ -8,59 +9,50 @@ class Board:
     MISS = '.'
     HIT = '*'
     SUNK = '#'
-    game_board = []
 
     def place_ship(self, battleship):
+        """Gets coordinates from player class and a convert coordinates
+        helper function.Uses the battleship object passed in and the
+        index returned as x and y values to change in place the values found
+        in the nested list of game_board. Once complete, returns the
+        game_board"""
         x, y = convert_coord(battleship.coord)
 
         if battleship.direction == 'VERTICAL_SHIP':
             if x <= self.BOARD_SIZE - battleship.length:
                 for point in range(0, battleship.length):
+                    # Place a tuple of coordinates into the positions list
+                    battleship.positions.append((x, y))
                     self.game_board[x][y] = self.VERTICAL_SHIP
                     x += 1
         else:
             if y <= self.BOARD_SIZE - battleship.length:
                 for point in range(0, battleship.length):
+                    battleship.positions.append((x, y))
                     self.game_board[x][y] = self.HORIZONTAL_SHIP
                     y += 1
-        # return new self.game_board
+
         return self.game_board
 
     # Will be called in print_board method
     def print_board_heading(self):
+        """Prints a row of alphabet letters found in a list based on size of
+        the board size."""
         print("   " + " ".join(self.cols))
 
     def print_board(self, board):
+        """Prints the board based on the board argument being a nested list."""
         print("\n")
         self.print_board_heading()
 
         row_num = 1
-        # board = []
-        # board = [["A1", "A2", "A3", "A4"],
-        #          ["B1", "B2", "B3", "B4"],
-        #          ["C1", "C2", "C3", "C4"]]
-
-        # prints a nested list with board[x] being the row and board[] being
-        # the columns.
-        # for row in range(self.BOARD_SIZE):
-        #     board.append([self.EMPTY for col in range(self.BOARD_SIZE)])
         for row in board:
             print(str(row_num).rjust(2) + " " + (" ".join(row)))
             row_num += 1
-
-        print("\n")
 
     def __init__(self):
         self.cols = [chr(c) for c in range(ord('A'), ord('A') +
                                            self.BOARD_SIZE)]
         self.rows = [num for num in range(1, self.BOARD_SIZE + 1)]
-        # self.game_board = [[[ltr, num] for ltr in self.cols[itm] for num in
-        #                     self.rows] for itm in range(self.BOARD_SIZE)]
-
-        # Creates a list of a list with EMPTY markers
-        # To add marker going horizontal, change in place at game_board[y][x]
-        # index x i.e. alphabet = x == x = "-" >> game_board[y]["-"]
-        # To add marker going vertical, change in place at game_board[y][x]
-        # index y i.e. num = y == y = "|" >> game_board["|"][x]
         self.game_board = [[self.EMPTY for col in self.rows] for row in
                            self.cols]
