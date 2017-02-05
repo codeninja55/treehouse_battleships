@@ -1,6 +1,7 @@
 from errors import ShipPlacementError, CoordinatesOccupiedError
 from helpers import convert_coord
 
+
 class Battleship:
     # provided by Treehouse's original project file
     SHIP_INFO = [
@@ -10,13 +11,14 @@ class Battleship:
         ("Cruiser", 3),
         ("Patrol Boat", 2)]
 
-    type = None
-    length = 0
-    coord = None
-    direction = None
-
     def __init__(self):
-        pass
+        self.type = None
+        self.length = 0
+        self.coord = None
+        self.direction = None
+        self.positions = []
+        self.hit = []
+        self.sunk = False
 
     def print_ships(self):
         """This method iterates through the SHIP_INFO list and prints each
@@ -33,7 +35,7 @@ class Battleship:
         try:
             return self.SHIP_INFO.pop(ship)
         except ValueError:
-            return False
+            return None
 
     def valid_placement(self, selectn, coord, directn, board):
         """This method will take arguments of selection index, coordinates,
@@ -74,45 +76,45 @@ class Battleship:
 
 
 class Aircraft_Carrier(Battleship):
-    type = "Aircraft Carrier"
-    length = 5
-    coord = None
-    direction = None
-    hit = []
-    sunk = False
+    def __init__(self, coord, direction):
+        Battleship.__init__(self)
+        self.type = "Aircraft Carrier"
+        self.length = 5
+        self.coord = coord
+        self.direction = direction
 
 
 class Frigate(Battleship):
-    type = "Frigate"
-    length = 4
-    coord = None
-    direction = None
-    hit = []
-    sunk = False
+    def __init__(self, coord, direction):
+        Battleship.__init__(self)
+        self.type = "Frigate"
+        self.length = 4
+        self.coord = coord
+        self.direction = direction
 
 
 class Submarine(Battleship):
-    type = "Submarine"
-    length = 3
-    coord = None
-    direction = None
-    hit = []
-    sunk = False
+    def __init__(self, coord, direction):
+        Battleship.__init__(self)
+        self.type = "Submarine"
+        self.length = 3
+        self.coord = coord
+        self.direction = direction
 
 
 class Cruiser(Battleship):
-    type = "Cruise"
-    length = 3
-    coord = None
-    direction = None
-    hit = []
-    sunk = False
+    def __init__(self, coord, direction):
+        Battleship.__init__(self)
+        self.type = "Cruise"
+        self.length = 3
+        self.coord = coord
+        self.direction = direction
 
 
 class Patrol_Boat(Battleship):
-    type = "Patrol Boat"
-    length = 2
-    coord = None
-    direction = None
-    hit = []
-    sunk = False
+    def __init__(self, coord, direction):
+        Battleship.__init__(self)
+        self.type = "Patrol Boat"
+        self.length = 2
+        self.coord = coord
+        self.direction = direction
