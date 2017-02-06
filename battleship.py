@@ -3,40 +3,6 @@ from helpers import convert_coord
 
 
 class Battleship:
-    # provided by Treehouse's original project file
-    SHIP_INFO = [
-        ("Aircraft Carrier", 5),
-        ("Frigate", 4),
-        ("Submarine", 3),
-        ("Cruiser", 3),
-        ("Patrol Boat", 2)]
-
-    def __init__(self):
-        self.type = None
-        self.length = 0
-        self.coord = None
-        self.direction = None
-        self.positions = []
-        self.hit = []
-        self.sunk = False
-
-    def print_ships(self):
-        """This method iterates through the SHIP_INFO list and prints each
-        one so that players can select the battleship based on index"""
-        count = 1
-        print("\n")
-        for ship, val in self.SHIP_INFO:
-            print("[ {} ] {}: {} spaces".format(count, ship, val))
-            count += 1
-        print("\n")
-
-    def remove_ship_choice(self, ship):
-        """This method removes and returns a tuple from the list in SHIP_INFO"""
-        try:
-            return self.SHIP_INFO.pop(ship)
-        except ValueError:
-            return None
-
     def valid_placement(self, selectn, coord, directn, board):
         """This method will take arguments of selection index, coordinates,
         and direction, as well as the player's board. It will check those
@@ -49,31 +15,64 @@ class Battleship:
 
         if directn == 'v':
             # Checks if the battleship fits within the boundary of the board
-            if x <= board.BOARD_SIZE - self.SHIP_INFO[selectn][1]:
-                for point in range(0, self.SHIP_INFO[selectn][1]):
+            if x <= board.BOARD_SIZE - self.ship_info[selectn][1]:
+                for point in range(0, self.ship_info[selectn][1]):
                     # Checks if points on the board are EMPTY
                     if board.game_board[x][y] != board.EMPTY:
-                        CoordinatesOccupiedError()
                         return False
                     x += 1
+                return True
             else:
                 ShipPlacementError()
                 return False
         elif directn == 'h':
-            if y <= board.BOARD_SIZE - self.SHIP_INFO[selectn][1]:
-                for point in range(0, self.SHIP_INFO[selectn][1]):
+            if y <= board.BOARD_SIZE - self.ship_info[selectn][1]:
+                for point in range(0, self.ship_info[selectn][1]):
                     if board.game_board[x][y] != board.EMPTY:
-                        CoordinatesOccupiedError()
                         return False
                     y += 1
+                return True
             else:
                 ShipPlacementError()
                 return False
         else:
             return False
 
-        return True
+    def print_ships(self):
+        """This method iterates through the ship_info list and prints each
+        one so that players can select the battleship based on index"""
+        count = 1
+        print("\n")
+        for ship, val in self.ship_info:
+            print("[ {} ] {}: {} spaces".format(count, ship, val))
+            count += 1
+        print("\n")
 
+    def get_next_ship(self, ship):
+        """This method removes and returns a tuple from the list in
+        ship_info. If there are no more battleships to place, will return a 0
+        so the ship_placement() method can break the while loop"""
+        try:
+            return self.ship_info.pop(ship)
+        except ValueError:
+            return False
+
+    def __init__(self):
+        # provided by Treehouse's original project file
+        self.ship_info = [
+            ("Aircraft Carrier", 5),
+            ("Frigate", 4),
+            ("Submarine", 3),
+            ("Cruiser", 3),
+            ("Patrol Boat", 2)]
+
+        self.type = None
+        self.length = 0
+        self.coord = None
+        self.direction = None
+        self.positions = []
+        self.hit = []
+        self.sunk = False
 
 class Aircraft_Carrier(Battleship):
     def __init__(self, coord, direction):
