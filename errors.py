@@ -16,6 +16,13 @@ class InputError:
         print("Try again...")
         print("*" * 60)
 
+    def direction(self):
+        clear()
+        print("*" * 60)
+        print("You have not selected a correct value for direction.")
+        print("Try again...")
+        print("*" * 60)
+
     def coordinates(self):
         clear()
         print("*" * 60)
@@ -30,6 +37,14 @@ class InputError:
         print("You have not made the right selection.")
         print("Try again...")
         print("*" * 60)
+
+    def guess(self):
+        clear()
+        print("*" * 60)
+        print("Your guess coordinates are invalid.")
+        print("Try again...")
+        print("*" * 60)
+
 
 class ShipPlacementError:
     # print out error message
