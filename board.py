@@ -18,7 +18,7 @@ class Board:
         game_board"""
         x, y = convert_coord(battleship.coord)
 
-        if battleship.direction == 'VERTICAL_SHIP':
+        if battleship.direction == 'v':
             if x <= self.BOARD_SIZE - battleship.length:
                 for point in range(0, battleship.length):
                     # Place a tuple of coordinates into the positions list
