@@ -1,21 +1,30 @@
-from helpers import clear, proceed_confirm, convert_coord
+from helpers import *
 from player import Player
-from errors import InputError
 
 
 class Game:
-    def game_progress(self, player, guess):
+    def game_progress(self, player, opponent):
         # check if each player still has a ship on the board
         # check each player's fleet for sunk value == false ????
 
+        if len(opponent.fleet) == 0:
+            print("#" * 60)
+            print("\n")
+            print("{}'s fleet has been sunk.".format(opponent.name))
+            print("\n{} HAS WON THE GAME!!!".format(player.name.upper()))
+            print("\n")
+            print("#" * 60)
+            return False
+        else:
+            for ship in opponent.fleet:
+                if ship.sunk:
+                    try:
+                        opponent.fleet.remove(ship)
+                        print(opponent.fleet)
+                    except (IndexError, ValueError):
+                        continue
 
-        # if a player guess has completely destroyed a ship
-            # end game
-            # return a false
-            # TODO - declare a winner
-        # else
-            # return true so game can continue
-        return False
+            return True
 
     def update_board(self, opponent, guess):
         # Update the board after every guess
@@ -25,21 +34,23 @@ class Game:
         x, y = guess
 
         for ship in opponent.fleet:
-            if ship.sunk == True:
+            if ship.sunk:
                 for coord in ship.positions:
                     x, y = coord
                     guess_board.game_board[x][y] = guess_board.SUNK
                     board.game_board[x][y] = board.SUNK
+                print("\nYou have sunk a {}.".format(ship.type))
             else:
-                break
+                continue
 
         if board.game_board[x][y] != board.SUNK:
             if board.game_board[x][y] == board.EMPTY:
                 guess_board.game_board[x][y] = board.MISS
+                print("\nOh you have missed!")
             elif board.game_board[x][y] == board.VERTICAL_SHIP or \
-                board.game_board[x][y] == board.HORIZONTAL_SHIP:
-
+                    board.game_board[x][y] == board.HORIZONTAL_SHIP:
                 guess_board.game_board[x][y] = board.HIT
+                print("\nThat was a HIT!")
 
     def update_battleships(self, opponent, guess):
         for ship in opponent.fleet:
@@ -50,86 +61,49 @@ class Game:
             if set(ship.positions) == set(ship.hit):
                 ship.sunk = True
 
-
-    def validate_guess(self, player, guess):
-        guess = guess.lstrip().rstrip().lower()
-        x, y = convert_coord(guess)
-        # TODO - validate guess
-        if isinstance(guess, str):
-            if len(guess) > 1 and \
-                    guess[0].upper() in player.player_board.cols and \
-                    guess[1:].isnumeric() and \
-                    int(guess[1:]) in player.player_board.rows and \
-                    (x, y) not in player.guesses:
-                return True
-            else:
-                return False
-        else:
-            print("Not a string")
-            return False
-
-
     def player_guess(self, player, opponent):
         # take the player's guess and add it to the guess_board of the opp
         # return the player obj and the guess
+        self.print_guess_boards(player, opponent)
+        self.print_guess_boards(opponent, player)
 
         guess = input("\n{}, guess a location to hit > ".format(
             player.name)).lower()
 
-        # TODO - display guess results
-        print("\n{}, you have guessed: {}".format(player.name, guess.upper()))
+        guess_valid = validate_coord(player.player_board, guess)
 
-        if self.validate_guess(player, guess):
-            g_coord = convert_coord(guess)
-            player.guesses.append(g_coord)
-            self.update_battleships(opponent, g_coord)
-            self.update_board(opponent, g_coord)
-        else:
-            InputError().guess()
+        # Check's the guess if it was a hit or miss
+
+        if not guess_valid:
             self.player_guess(player, opponent)
-
-        # return guess
-
-    def play(self, player1, player2):
-        # TODO - allow players to take turns
-        print("\n{}'S GUESS BOARD".format(player1.name.upper()))
-        player1.player_board.print_board(player2.guess_board.game_board)
-        print("\n")
-        print("\n{}'S GUESS BOARD".format(player2.name.upper()))
-        player2.player_board.print_board(player1.guess_board.game_board)
-        print("\n")
-
-        # Use this marker for testing purposes until game_progress method done
-        game_progress = True
-
-        while game_progress:
+        else:
             clear()
+            guess_coord = convert_coord(guess_valid)
+            print(
+                "\n{}, you have guessed: {}".format(player.name, guess.upper()))
+            player.guesses.append(guess_coord)
+            self.update_battleships(opponent, guess_coord)
+            self.update_board(opponent, guess_coord)
+            self.print_guess_boards(player, opponent)
 
-            print("\n{}'S GUESS BOARD".format(player1.name.upper()))
-            player1.player_board.print_board(player2.guess_board.game_board)
-            print("\n")
-            print("\n{}'S GUESS BOARD".format(player2.name.upper()))
-            player2.player_board.print_board(player1.guess_board.game_board)
+    def print_guess_boards(self, player, opponent):
+        print("\n{}'S GUESS BOARD".format(player.name.upper()))
+        opponent.player_board.print_board(opponent.guess_board.game_board)
 
-            print("\n{}, it is your turn now.".format(player1.name))
-            self.player_guess(player1, player2)
-            print("\n{} your turn is finished.".format(player1.name))
-
+    def player_turn(self, player, opponent):
+        if self.game_progress(player, opponent):
+            clear()
+            print("\n{}, it is your turn now.".format(player.name))
+            self.player_guess(player, opponent)
+            print("\n{} your turn is finished.".format(player.name))
             proceed_confirm()
-            clear()
 
-            print("\n{}'S GUESS BOARD".format(player1.name.upper()))
-            player1.player_board.print_board(player2.guess_board.game_board)
-            print("\n")
-            print("\n{}'S GUESS BOARD".format(player2.name.upper()))
-            player2.player_board.print_board(player1.guess_board.game_board)
-
-            print("\n{}, it is your turn now.".format(player2.name))
-            self.player_guess(player2, player1)
-            print("\n{} your turn is finished.".format(player2.name))
-
-        # while self.game_progress(player1, player2):
-        #     break
+    # def play(self, player1, player2):
+    #     """This method..."""
+    #
+    #     while self.game_progress(player1, player2):
+    #         self.player_turn(player1, player2)
+    #         self.player_turn(player2, player1)
 
     def setup_game(self):
         """This method will ask the players for their names and begin to
@@ -137,19 +111,25 @@ class Game:
         # Instantiate two players, ask for name, then place ships
         name1 = input("\nPLAYER 1 NAME > ").lstrip().rstrip().lower()
         name2 = input("\nPLAYER 2 NAME > ").lstrip().rstrip().lower()
+        clear()
+        print("\nPlayer 1: {}\n\nPlayer 2: {}".format(name1.capitalize(),
+                                                        name2.capitalize()))
+        proceed_confirm()
 
+        clear()
         player1 = Player(name1, 1)
         confirmation = input("\n{}, are you ready to place your battleships? "
                              "[Y] / [n] > ".format(name1.capitalize())).lower()
 
         if confirmation != 'n':
+            clear()
             player1.ship_placement()
         else:
             proceed_confirm()
 
         print("\n{} (Player: {}), you have now completed your setup of "
               "Battleship.".format(name1.capitalize(), player1.player_num))
-        print("\n\n")
+        print("\nPlease pass the game to {}.".format(name2.capitalize()))
 
         proceed_confirm()
         clear()
@@ -160,6 +140,7 @@ class Game:
                              "[Y] / [n] > ".format(name2.capitalize())).lower()
 
         if confirmation != 'n':
+            clear()
             player2.ship_placement()
         else:
             proceed_confirm()
@@ -173,16 +154,11 @@ class Game:
         return player1, player2
 
     def __init__(self):
-        # display an empty board
         clear()
         player1, player2 = self.setup_game()
-        self.play(player1, player2)
-
-# TODO - EXTRA - clear screen after an invalid entry. Board and prompts are \
-    # redisplayed and the game informs the player why their input was \
-    # unacceptable
-# TODO - EXTRA - error messages are detailed and include the invalid guess
-# TODO - EXTRA - display both the player's boards on the screen showing ships
+        # self.play(player1, player2)
+        self.player_turn(player1, player2)
+        self.player_turn(player2, player1)
 
 if __name__ == '__main__':
     Game()
