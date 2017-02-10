@@ -1,7 +1,5 @@
 import os
 
-from errors import InputError
-
 
 def clear():
     """This helper function clears the console."""

@@ -1,5 +1,4 @@
 from errors import ShipPlacementError
-from helpers import convert_coord
 
 
 class Battleship:

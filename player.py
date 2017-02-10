@@ -1,7 +1,7 @@
 from battleship import *
 from board import Board
 from errors import InputError
-from helpers import clear, validate_coord
+from helpers import clear
 
 
 class Player:
