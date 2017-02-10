@@ -1,7 +1,10 @@
 import os
 
+from errors import InputError
+
 
 def clear():
+    """This helper function clears the console."""
     if os.name == 'nt':
         os.system('cls')
     else:
@@ -9,7 +12,8 @@ def clear():
 
 
 def convert_coord(coord):
-    """This helper function converts coordinates such as a1 to index numbers"""
+    """This helper function converts coordinates such as a1 to index numbers
+    packed into a tuple."""
     y = ord(coord[0]) - 97
 
     if len(coord) > 2:
@@ -21,7 +25,10 @@ def convert_coord(coord):
 
 
 def proceed_confirm():
+    """This helper function pauses the continuation of any loops until an
+    enter is pressed with no value in the input."""
     while True:
+        print("\n\n")
         inp = input("\nPress enter/return when you are ready to proceed > ")
         if inp == "":
             break
