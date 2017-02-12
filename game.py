@@ -1,48 +1,40 @@
 from helpers import *
 from player import Player
+from sys import exit
 
 
 class Game:
-    def game_progress(self, player, opponent):
-        # check if each player still has a ship on the board
-        # check each player's fleet for sunk value == false ????
-
-        if len(opponent.fleet) == 0:
-            print("#" * 60)
-            print("\n")
-            print("{}'s fleet has been sunk.".format(opponent.name))
-            print("\n{} HAS WON THE GAME!!!".format(player.name.upper()))
-            print("\n")
-            print("#" * 60)
-            return False
-        else:
-            for ship in opponent.fleet:
-                if ship.sunk:
-                    try:
-                        opponent.fleet.remove(ship)
-                        print(opponent.fleet)
-                    except (IndexError, ValueError):
-                        continue
-
-            return True
+    def print_winner(self, player, opponent):
+        print("\n\n" + "#" * 60 + "\n")
+        print("{}'s fleet has been sunk.".format(opponent.name))
+        print("\n{} HAS WON THE GAME!!!".format(player.name.upper()))
+        print("\n" + "#" * 60 + "\n")
+        exit()
 
     def update_board(self, opponent, guess):
-        # Update the board after every guess
-        # Take guess value and change the board of the opponents guess board.
+        """This method will update the guess board from the opposing player
+        as each player makes a guess."""
+
         board = opponent.player_board
         guess_board = opponent.guess_board
         x, y = guess
 
+        # Check each ship in the opponent's fleet and if they sunk value has
+        # been changed to True, then update the board with the SUNK value
         for ship in opponent.fleet:
             if ship.sunk:
                 for coord in ship.positions:
                     x, y = coord
                     guess_board.game_board[x][y] = guess_board.SUNK
                     board.game_board[x][y] = board.SUNK
-                print("\nYou have sunk a {}.".format(ship.type))
+
+                print("\nYou have sunk {}'s {}.".format(
+                    opponent.name.capitalize(), ship.type))
             else:
                 continue
 
+        # If the ship has not already been sunk, check if it's a hit or miss
+        # based on the player's board completed at setup.
         if board.game_board[x][y] != board.SUNK:
             if board.game_board[x][y] == board.EMPTY:
                 guess_board.game_board[x][y] = board.MISS
@@ -53,6 +45,10 @@ class Game:
                 print("\nThat was a HIT!")
 
     def update_battleships(self, opponent, guess):
+        """This method will update each battleship by comparing a set
+        positions for the battleship and a list of guesses by the player. If
+        those sets match, it will update the sunk attribute to True"""
+
         for ship in opponent.fleet:
             for coord in ship.positions:
                 if coord == guess:
@@ -61,16 +57,31 @@ class Game:
             if set(ship.positions) == set(ship.hit):
                 ship.sunk = True
 
+    def update_fleet(self, opponent):
+        """This method will go through the opposing player's fleet and check
+        if the sunk attribute has been set to True. If so, it will attempt to
+        remove it from the fleet"""
+
+        for ship in opponent.fleet:
+            if ship.sunk:
+                try:
+                    opponent.fleet.remove(ship)
+                    print(opponent.fleet)
+                except (IndexError, ValueError):
+                    continue
+
     def player_guess(self, player, opponent):
-        # take the player's guess and add it to the guess_board of the opp
-        # return the player obj and the guess
+        """This method will take the player's guess and check if it is
+        firstly valid. If valid, it will call the methods update_battleships,
+        update_board, and print_guess_boards."""
+
         self.print_guess_boards(player, opponent)
         self.print_guess_boards(opponent, player)
 
         guess = input("\n{}, guess a location to hit > ".format(
             player.name)).lower()
 
-        guess_valid = validate_coord(player.player_board, guess)
+        guess_valid = player.player_board.validate_coord(guess)
 
         # Check's the guess if it was a hit or miss
 
@@ -87,23 +98,30 @@ class Game:
             self.print_guess_boards(player, opponent)
 
     def print_guess_boards(self, player, opponent):
+        """This method will print the guess board as part of the opposing
+        player's Player object."""
+
         print("\n{}'S GUESS BOARD".format(player.name.upper()))
         opponent.player_board.print_board(opponent.guess_board.game_board)
 
     def player_turn(self, player, opponent):
-        if self.game_progress(player, opponent):
-            clear()
+        """This method will first update the player's fleet and check if they
+        any remaining battleships. If not, it will declare the opposing
+        player as the winner. Otherwise, it will allow the player to make an
+        input as a guess and begin the process of checking if that guess was
+        a hit or miss."""
+
+        clear()
+
+        self.update_fleet(player)
+
+        if not player.fleet:
+            self.print_winner(opponent, player)
+        else:
             print("\n{}, it is your turn now.".format(player.name))
             self.player_guess(player, opponent)
             print("\n{} your turn is finished.".format(player.name))
             proceed_confirm()
-
-    # def play(self, player1, player2):
-    #     """This method..."""
-    #
-    #     while self.game_progress(player1, player2):
-    #         self.player_turn(player1, player2)
-    #         self.player_turn(player2, player1)
 
     def setup_game(self):
         """This method will ask the players for their names and begin to
@@ -154,11 +172,16 @@ class Game:
         return player1, player2
 
     def __init__(self):
+        """This class will begin the setup process and the gamplay for
+        Battleships."""
+
         clear()
         player1, player2 = self.setup_game()
         # self.play(player1, player2)
-        self.player_turn(player1, player2)
-        self.player_turn(player2, player1)
+        while player1.fleet and player2.fleet:
+            self.player_turn(player1, player2)
+            self.player_turn(player2, player1)
+
 
 if __name__ == '__main__':
     Game()
