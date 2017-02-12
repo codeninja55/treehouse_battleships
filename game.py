@@ -5,6 +5,8 @@ from sys import exit
 
 class Game:
     def print_winner(self, player, opponent):
+        """This method will print information to the screen to declare a winner.
+        Once printed, the game will exit."""
         print("\n\n" + "#" * 60 + "\n")
         print("{}'s fleet has been sunk.".format(opponent.name))
         print("\n{} HAS WON THE GAME!!!".format(player.name.upper()))

@@ -125,3 +125,13 @@ exceeds, display both the player’s boards on the screen.
 
 # Script Details
 
+Play the game by instantiating a Game object.
+
+The Game object will initialise a setup process by creating a Player object for
+each player. Each player class will then instantiate a Battleship class, a
+Player board Board class, a Guess board Board class. The setup of the player's
+fleet will instantiate each battleship subclass. The game will then begin with
+a check if a player has battleships stored as objects inside a fleet list. If
+that player has battleships remaining, they will then begin guessing the
+opposing player's battleship locations on their Guess board which will be
+printed to the screen.

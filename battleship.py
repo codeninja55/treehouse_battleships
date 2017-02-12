@@ -58,16 +58,12 @@ class Battleship:
 
     def __init__(self):
         # provided by Treehouse's original project file
-        # self.ship_info = [
-        #     ("Aircraft Carrier", 5),
-        #     ("Frigate", 4),
-        #     ("Submarine", 3),
-        #     ("Cruiser", 3),
-        #     ("Patrol Boat", 2)]
-
         self.ship_info = [
-            ("Aircraft Carrier", 2),
-            ("Frigate", 2)]
+            ("Aircraft Carrier", 5),
+            ("Frigate", 4),
+            ("Submarine", 3),
+            ("Cruiser", 3),
+            ("Patrol Boat", 2)]
 
         self.type = None
         self.length = 0
@@ -81,7 +77,7 @@ class Aircraft_Carrier(Battleship):
     def __init__(self, coord, orientation):
         Battleship.__init__(self)
         self.type = "Aircraft Carrier"
-        self.length = 2
+        self.length = 5
         self.coord = coord
         self.orientation = orientation
 
@@ -90,7 +86,7 @@ class Frigate(Battleship):
     def __init__(self, coord, orientation):
         Battleship.__init__(self)
         self.type = "Frigate"
-        self.length = 2
+        self.length = 4
         self.coord = coord
         self.orientation = orientation
 
