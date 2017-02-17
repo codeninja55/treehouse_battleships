@@ -47,20 +47,33 @@ class Board:
                     else:
                         coord = str(coord[2]) + str(coord[0:2])
                         return self.validate_coord(coord)
-            else:
-                try:
-                    if int(coord[1]) not in self.rows:
-                        InputError('board_boundaries', coord)
-                        return False
-                except ValueError:
-                    InputError('coordinate_int', coord)
+            elif coord[0].isalpha():
+                if len(coord) >= 4:
+                    InputError('board_boundaries', coord)
                     return False
+                elif len(coord) == 3 and coord[1:3].isnumeric():
+                    try:
+                        if int(coord[1:3]) not in self.rows:
+                            InputError('board_boundaries', coord)
+                            return False
+                    except ValueError:
+                        InputError('coordinate_int', coord)
+                        return False
                 else:
-                    if coord[0].upper() not in self.cols:
-                        InputError('board_boundaries', coord)
+                    try:
+                        if int(coord[1]) not in self.rows:
+                            InputError('board_boundaries', coord)
+                            return False
+                    except ValueError:
+                        InputError('coordinate_int', coord)
                         return False
                     else:
-                        return coord
+                        if coord[0].upper() not in self.cols:
+                            InputError('board_boundaries', coord)
+                            return False
+                        else:
+                            return coord
+
 
     def place_ship(self, battleship):
         """Gets coordinates from player class and a convert coordinates
